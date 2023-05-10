@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { DynamicNewsService } from './services/dynamic-news.service';
+import { News } from './interfaces/news-interface';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,26 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'exon-economy-v2';
+  searchKeyword: string = '';
+  searchResults: News[] = [];
+  searchError = '';
+  
+  constructor(private newsService: DynamicNewsService) {}
+
+  searchNews(): void {
+    if (this.searchKeyword.trim()) {
+      this.newsService.searchNews(this.searchKeyword.trim()).subscribe(
+        (news) => {
+          this.searchResults = news;
+        },
+        (error) => {
+          console.error('Error fetching news: ', error);
+          // Do something with the error, e.g. show an error message to the user
+          this.searchError = error;
+        }
+      );
+    } else {
+      this.searchResults = [];
+    }
+  }
 }
